@@ -5,7 +5,9 @@
 	"main": "index.js",
 	"scripts": {
 		"build": "tsc -p tsconfig.json",
-		"start": "node index.js"
+		"start": "node index.js",
+		"run-dev": "tsx watch src/server.ts",
+		"dev": "set \"NODE_ENV=development\" && npm run run-dev"
 	},
 	"repository": {
 		"type": "git",
@@ -25,6 +27,7 @@
 	"devDependencies": {
 		"@types/node": "^22.4.0",
 		"dotenv": "^16.4.5",
+		"tsx": "^4.17.0",
 		"typescript": "^5.5.4"
 	}
 }
