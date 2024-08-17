@@ -12,14 +12,13 @@ class App {
 
 	public starts() {
 		const server = this.app.listen(env.server.port, () => {
-			console.log("--");
-			console.log(env.app.name);
+			console.log("---");
+			console.log("Package name:              " + env.app.name);
 			console.log("Environment:       " + process.env.NODE_ENV);
-			// console.log("Database:          " + env.database.uri);
 			console.log("App version:       " + env.app.version);
 			console.log("Running on port:   " + env.server.port);
 			console.log("Authority:         " + env.server.authority);
-			console.log("--");
+			console.log("---");
 		});
 
 		return { server };
