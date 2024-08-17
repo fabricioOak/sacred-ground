@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  sacredground_postgres:
+    image: bitnami/postgresql:latest
+    container_name: sacredground_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: sacredground_user
+      POSTGRES_PASSWORD: sacredground_password
+      POSTGRES_DB: sacredground_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - sacredground_postgres_data:/var/lib/postgresql/data
+    networks:
+      - sacredground_network
+
+volumes:
+  sacredground_postgres_data:
+
+networks:
+  sacredground_network:
