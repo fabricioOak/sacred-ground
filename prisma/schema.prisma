@@ -1,0 +1,127 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Cemetery {
+  id        Int       @id @default(autoincrement())
+  name      String
+  address   String
+  terrains  Terrain[] @relation("CemeteryTerrains")
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Terrain {
+  id                Int            @id @default(autoincrement())
+  location          String
+  size              Float
+  type              String
+  images            TerrainImage[]
+  cemeteryId        Int
+  cemetery          Cemetery       @relation("CemeteryTerrains", fields: [cemeteryId], references: [id])
+  graves            Grave[]
+  transferencesFrom Transference[] @relation("TerrainTransferenceFrom")
+  transferencesTo   Transference[] @relation("TerrainTransferenceTo")
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+  Transference      Transference[]
+}
+
+model TerrainImage {
+  id        Int      @id @default(autoincrement())
+  url       String
+  terrainId Int
+  terrain   Terrain  @relation(fields: [terrainId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Grave {
+  id        Int      @id @default(autoincrement())
+  location  String
+  terrainId Int
+  terrain   Terrain  @relation(fields: [terrainId], references: [id])
+  burials   Burial[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Burial {
+  id           Int          @id @default(autoincrement())
+  deceasedName String
+  dateOfDeath  DateTime
+  funeralHome  String
+  graveId      Int
+  grave        Grave        @relation(fields: [graveId], references: [id])
+  exhumations  Exhumation[]
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+}
+
+model Exhumation {
+  id        Int      @id @default(autoincrement())
+  date      DateTime
+  reason    String
+  burialId  Int
+  burial    Burial   @relation(fields: [burialId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Transference {
+  id            Int      @id @default(autoincrement())
+  date          DateTime
+  fromTerrainId Int
+  toTerrainId   Int
+  fromTerrain   Terrain  @relation("TerrainTransferenceFrom", fields: [fromTerrainId], references: [id])
+  toTerrain     Terrain  @relation("TerrainTransferenceTo", fields: [toTerrainId], references: [id])
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  Terrain       Terrain? @relation(fields: [terrainId], references: [id])
+  terrainId     Int?
+}
+
+model DeathRecord {
+  id             Int      @id @default(autoincrement())
+  deceasedName   String
+  deathDate      DateTime
+  hospital       String
+  doctor         String
+  registryOffice String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model User {
+  id        Int        @id @default(autoincrement())
+  email     String     @unique
+  password  String
+  role      UserRole
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  AuditLog  AuditLog[]
+}
+
+enum UserRole {
+  ADMIN
+  USER
+}
+
+model AuditLog {
+  id        Int      @id @default(autoincrement())
+  action    String
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+}
