@@ -1,5 +1,7 @@
 import { App } from "./config/lib/app";
 
-const { server } = new App().starts();
+const app = new App();
+
+const { server } = app.starts();
 
 export { server };
