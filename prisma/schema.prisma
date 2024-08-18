@@ -107,15 +107,67 @@ model User {
   id        Int        @id @default(autoincrement())
   email     String     @unique
   password  String
-  role      UserRole
+  roles     UserRole[]
+  firstName String
+  lastName  String
+  phone     String
+  documents Document[]
+  status    UserStatus
+  address   Address?   @relation(fields: [addressid], references: [id])
+  addressid Int?
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
   AuditLog  AuditLog[]
 }
 
+model Document {
+  id        Int          @id @default(autoincrement())
+  type      DocumentType
+  number    String
+  issuedBy  String? // Opcional: órgão expedidor, se necessário
+  issuedAt  DateTime? // Opcional: data de emissão, se necessário
+  user      User         @relation(fields: [userid], references: [id])
+  userid    Int
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  @@unique([type, number]) // Make sure they are unique
+}
+
+enum DocumentType {
+  CPF
+  RG
+  CNH
+  PASSPORT
+  OTHER
+}
+
+model Address {
+  id        Int      @id @default(autoincrement())
+  street    String
+  number    String
+  city      String
+  state     String
+  country   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  User User[]
+}
+
 enum UserRole {
   ADMIN
   USER
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  PENDING
+  SUSPENDED
+  DELETED
+  BANNED
+  ARCHIVED
 }
 
 model AuditLog {
